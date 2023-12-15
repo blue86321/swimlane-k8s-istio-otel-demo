@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
       - name: gateway
-        image: blue86321/swimlane-demo-gateway:1.0.0
+        image: blue86321/swimlane-demo-gateway-otel:1.0.0
         imagePullPolicy: IfNotPresent
         env:
         - name: GOODS_SERVICE

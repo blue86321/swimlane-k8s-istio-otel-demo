@@ -12,10 +12,12 @@ spec:
       labels:
         app: goods
         swimlane: main
+      annotations:
+        instrumentation.opentelemetry.io/inject-python: "true"
     spec:
       containers:
       - name: goods
-        image: blue86321/swimlane-demo-goods:1.0.0
+        image: blue86321/swimlane-demo-goods-otel:1.0.0
         imagePullPolicy: IfNotPresent
         env:
         - name: PRICING_SERVICE
@@ -44,10 +46,12 @@ spec:
       labels:
         app: goods
         swimlane: dev-feature1
+      annotations:
+        instrumentation.opentelemetry.io/inject-python: "true"
     spec:
       containers:
       - name: goods
-        image: blue86321/swimlane-demo-goods:1.0.0
+        image: blue86321/swimlane-demo-goods-otel:1.0.0
         imagePullPolicy: IfNotPresent
         env:
         - name: PRICING_SERVICE
@@ -75,10 +79,12 @@ spec:
       labels:
         app: goods
         swimlane: dev-feature2
+      annotations:
+        instrumentation.opentelemetry.io/inject-python: "true"
     spec:
       containers:
       - name: goods
-        image: blue86321/swimlane-demo-goods:1.0.0
+        image: blue86321/swimlane-demo-goods-otel:1.0.0
         imagePullPolicy: IfNotPresent
         env:
         - name: PRICING_SERVICE

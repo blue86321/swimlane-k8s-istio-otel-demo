@@ -1,6 +1,5 @@
 import os
 from concurrent import futures
-from typing import Optional
 
 import grpc
 from proto.service_pb2 import (GetGoodsRequest, GetGoodsResponse,
@@ -19,13 +18,10 @@ class GoodsService(service_pb2_grpc.GoodsServiceServicer):
         self.swimlane = swimlane
 
     def GetGoods(self, request: GetGoodsRequest, context: grpc.ServicerContext) -> GetGoodsResponse:
-        metadata = dict(context.invocation_metadata())
-        incoming_swimlane: Optional[str] = metadata.get('x-swimlane', None)
-
         # Iterate to get goods price
         goods_info_list = []
         for goods in GOODS_LIST:
-            get_price_resp: GetPriceResponse = self._get_price_by_rpc(goods.get('id'), incoming_swimlane)
+            get_price_resp: GetPriceResponse = self._get_price_by_rpc(goods_id=goods.get('id'))
             goods_info_list.append(GetGoodsResponse.GoodsInfo(
                 goods_id=goods.get('id'),
                 goods_name=goods.get('name'),
@@ -39,17 +35,15 @@ class GoodsService(service_pb2_grpc.GoodsServiceServicer):
         )
 
     @staticmethod
-    def _get_price_by_rpc(goods_id: str, swimlane: Optional[str]) -> GetPriceResponse:
+    def _get_price_by_rpc(goods_id: str) -> GetPriceResponse:
         """Get goods price by a gRPC call
 
         Args:
             goods_id (str): goods id
-            swimlane (str): swimlane
         """
         with grpc.insecure_channel(os.getenv("PRICING_SERVICE")) as channel:
             pricing_stub = service_pb2_grpc.PricingServiceStub(channel)
-            metadata = [('x-swimlane', swimlane)]
-            response = pricing_stub.GetPrice(GetPriceRequest(goods_id=goods_id), metadata=metadata)
+            response = pricing_stub.GetPrice(GetPriceRequest(goods_id=goods_id))
             return response
 
 

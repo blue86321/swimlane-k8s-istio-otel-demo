@@ -12,10 +12,12 @@ spec:
       labels:
         app: pricing
         swimlane: main
+      annotations:
+        instrumentation.opentelemetry.io/inject-java: "true"
     spec:
       containers:
       - name: pricing
-        image: blue86321/swimlane-demo-pricing:1.0.0
+        image: blue86321/swimlane-demo-pricing-otel:1.0.0
         imagePullPolicy: IfNotPresent
         env:
         - name: SWIMLANE
@@ -42,10 +44,12 @@ spec:
       labels:
         app: pricing
         swimlane: dev-feature1
+      annotations:
+        instrumentation.opentelemetry.io/inject-java: "true"
     spec:
       containers:
       - name: pricing
-        image: blue86321/swimlane-demo-pricing:1.0.0
+        image: blue86321/swimlane-demo-pricing-otel:1.0.0
         imagePullPolicy: IfNotPresent
         env:
         - name: SWIMLANE

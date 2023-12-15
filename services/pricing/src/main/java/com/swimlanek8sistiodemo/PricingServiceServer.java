@@ -31,8 +31,8 @@ public class PricingServiceServer {
         public <ReqT, RespT> ServerCall.Listener<ReqT> interceptCall(ServerCall<ReqT, RespT> call, Metadata headers,
                                                                      ServerCallHandler<ReqT, RespT> next) {
             // Access headers here if needed
-            String swimlane = headers.get(Metadata.Key.of("x-swimlane", Metadata.ASCII_STRING_MARSHALLER));
-            System.out.println("Received x-swimlane header in interceptor: " + swimlane);
+            String baggage = headers.get(Metadata.Key.of("baggage", Metadata.ASCII_STRING_MARSHALLER));
+            System.out.println("Received baggage header in interceptor: " + baggage);
 
             return next.startCall(call, headers);
         }

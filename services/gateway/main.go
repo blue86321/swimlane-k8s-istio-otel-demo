@@ -23,7 +23,7 @@ func getGoods(swimlane string) (*pb.GetGoodsResponse, error) {
 	c := pb.NewGoodsServiceClient(conn)
 
 	// Propagate `x-swimlane` to outbound servers
-	md := metadata.Pairs("x-swimlane", swimlane)
+	md := metadata.Pairs("baggage", "x-swimlane="+swimlane)
 	ctx := metadata.NewOutgoingContext(context.Background(), md)
 	r, err := c.GetGoods(ctx, &pb.GetGoodsRequest{})
 	if err != nil {

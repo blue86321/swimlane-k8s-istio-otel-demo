@@ -8,16 +8,16 @@ spec:
   http: 
   - match:
     - headers:
-        x-swimlane:
-          exact: dev-feature1
+        baggage:
+          regex: .*swimlane=dev-feature1.*
     route:
     - destination:
         host: goods-service
         subset: dev-feature1
   - match:
     - headers:
-        x-swimlane:
-          exact: dev-feature2
+        baggage:
+          regex: .*swimlane=dev-feature2.*
     route:
     - destination:
         host: goods-service

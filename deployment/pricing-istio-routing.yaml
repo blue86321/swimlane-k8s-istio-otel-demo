@@ -8,8 +8,8 @@ spec:
   http:
   - match:
     - headers:
-        x-swimlane:
-          exact: dev-feature1
+        baggage:
+          regex: .*swimlane=dev-feature1.*
     route:
     - destination:
         host: pricing-service
