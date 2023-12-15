@@ -1,0 +1,35 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: pricing
+spec:
+  hosts:
+  - pricing-service
+  http:
+  - match:
+    - headers:
+        x-swimlane:
+          exact: dev-feature1
+    route:
+    - destination:
+        host: pricing-service
+        subset: dev-feature1
+  - route:
+    - destination:
+        host: pricing-service
+        subset: main
+
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: pricing
+spec:
+  host: pricing-service
+  subsets:
+  - name: main
+    labels:
+      swimlane: main
+  - name: dev-feature1
+    labels:
+      swimlane: dev-feature1

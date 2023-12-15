@@ -1,0 +1,46 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: goods
+spec:
+  hosts:
+  - goods-service
+  http: 
+  - match:
+    - headers:
+        x-swimlane:
+          exact: dev-feature1
+    route:
+    - destination:
+        host: goods-service
+        subset: dev-feature1
+  - match:
+    - headers:
+        x-swimlane:
+          exact: dev-feature2
+    route:
+    - destination:
+        host: goods-service
+        subset: dev-feature2
+  - route:
+    - destination:
+        host: goods-service
+        subset: main
+
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: goods
+spec:
+  host: goods-service
+  subsets:
+  - name: main
+    labels:
+      swimlane: main
+  - name: dev-feature1
+    labels:
+      swimlane: dev-feature1
+  - name: dev-feature2
+    labels:
+      swimlane: dev-feature2
