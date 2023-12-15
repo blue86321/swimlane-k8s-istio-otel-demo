@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+package myservice;
+
+option go_package = "./";
+
+option java_package = "com.swimlanek8sistiodemo.proto.service";
+option java_multiple_files = true;
+
+// GoodsService
+service GoodsService {
+  rpc GetGoods (GetGoodsRequest) returns (GetGoodsResponse);
+}
+
+message GetGoodsRequest {
+}
+
+message GetGoodsResponse {
+  repeated GoodsInfo goods_info_list = 1;
+  string goods_swimlane = 100;
+  string pricing_swimlane = 101;
+
+  message GoodsInfo {
+    string goods_id = 1;
+    string goods_name = 2;
+    int64 price = 3;
+  }
+}
+
+// PricingService
+service PricingService {
+  rpc GetPrice (GetPriceRequest) returns (GetPriceResponse);
+}
+
+message GetPriceRequest {
+  string goods_id = 1;
+}
+
+message GetPriceResponse {
+  int64 price = 1;
+  string swimlane = 100;
+}
