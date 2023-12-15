@@ -1,0 +1,105 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: goods-deploy-main
+spec:
+  selector:
+    matchLabels:
+      app: goods
+      swimlane: main
+  template:
+    metadata:
+      labels:
+        app: goods
+        swimlane: main
+    spec:
+      containers:
+      - name: goods
+        image: blue86321/swimlane-demo-goods:1.0.0
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: PRICING_SERVICE
+          value: pricing-service:50052
+        - name: SWIMLANE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.labels['swimlane']
+        ports:
+        - containerPort: 50051
+          name: goods-port
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: goods-deploy-dev-feature1
+spec:
+  selector:
+    matchLabels:
+      app: goods
+      swimlane: dev-feature1
+  template:
+    metadata:
+      labels:
+        app: goods
+        swimlane: dev-feature1
+    spec:
+      containers:
+      - name: goods
+        image: blue86321/swimlane-demo-goods:1.0.0
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: PRICING_SERVICE
+          value: pricing-service:50052
+        - name: SWIMLANE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.labels['swimlane']
+        ports:
+        - containerPort: 50051
+          name: goods-port
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: goods-deploy-dev-feature2
+spec:
+  selector:
+    matchLabels:
+      app: goods
+      swimlane: dev-feature2
+  template:
+    metadata:
+      labels:
+        app: goods
+        swimlane: dev-feature2
+    spec:
+      containers:
+      - name: goods
+        image: blue86321/swimlane-demo-goods:1.0.0
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: PRICING_SERVICE
+          value: pricing-service:50052
+        - name: SWIMLANE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.labels['swimlane']
+        ports:
+        - containerPort: 50051
+          name: goods-port
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: goods-service
+spec:
+  selector:
+    app: goods
+  ports:
+    - protocol: TCP
+      port: 50051
+      targetPort: goods-port

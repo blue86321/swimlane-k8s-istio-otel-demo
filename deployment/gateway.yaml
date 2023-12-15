@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gateway-deploy-main
+spec:
+  selector:
+    matchLabels:
+      app: gateway
+  template:
+    metadata:
+      labels:
+        app: gateway
+    spec:
+      containers:
+      - name: gateway
+        image: blue86321/swimlane-demo-gateway:1.0.0
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: GOODS_SERVICE
+          value: goods-service:50051
+        ports:
+        - containerPort: 8080
+          name: gateway-port
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gateway-service
+spec:
+  selector:
+    app: gateway
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: gateway-port

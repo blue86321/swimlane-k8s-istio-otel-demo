@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pricing-deploy-main
+spec:
+  selector:
+    matchLabels:
+      app: pricing
+      swimlane: main
+  template:
+    metadata:
+      labels:
+        app: pricing
+        swimlane: main
+    spec:
+      containers:
+      - name: pricing
+        image: blue86321/swimlane-demo-pricing:1.0.0
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: SWIMLANE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.labels['swimlane']
+        ports:
+        - containerPort: 50052
+          name: pricing-port
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pricing-deploy-dev-feature1
+spec:
+  selector:
+    matchLabels:
+      app: pricing
+      swimlane: dev-feature1
+  template:
+    metadata:
+      labels:
+        app: pricing
+        swimlane: dev-feature1
+    spec:
+      containers:
+      - name: pricing
+        image: blue86321/swimlane-demo-pricing:1.0.0
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: SWIMLANE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.labels['swimlane']
+        ports:
+        - containerPort: 50052
+          name: pricing-port
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pricing-service
+spec:
+  selector:
+    app: pricing
+  ports:
+    - protocol: TCP
+      port: 50052
+      targetPort: pricing-port
