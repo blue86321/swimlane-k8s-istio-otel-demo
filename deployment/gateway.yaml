@@ -21,6 +21,20 @@ spec:
         ports:
         - containerPort: 8080
           name: gateway-port
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: gateway-port
+          initialDelaySeconds: 3
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: gateway-port
+          initialDelaySeconds: 60
+          periodSeconds: 30
+          failureThreshold: 5
+          timeoutSeconds: 5
 
 ---
 apiVersion: v1

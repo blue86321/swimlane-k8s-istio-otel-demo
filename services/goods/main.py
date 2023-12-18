@@ -2,13 +2,22 @@ import os
 from concurrent import futures
 
 import grpc
+from proto.health_check_pb2 import HealthCheckRequest, HealthCheckResponse
 from proto.service_pb2 import (GetGoodsRequest, GetGoodsResponse,
                                GetPriceRequest, GetPriceResponse)
 
-from proto import service_pb2_grpc
+from proto import health_check_pb2_grpc, service_pb2_grpc
 
 GOODS_LIST = [{"id": "1", "name": "Item 1"}, {"id": "2", "name": "Item 2"}]
 
+
+class Health(health_check_pb2_grpc.HealthServicer):
+    """Pod probe in K8s
+    """
+    def Check(self, request: HealthCheckRequest, context: grpc.ServicerContext) -> HealthCheckResponse:
+        return HealthCheckResponse(
+            status=HealthCheckResponse.ServingStatus.SERVING
+        )
 
 class GoodsService(service_pb2_grpc.GoodsServiceServicer):
     """Implement gRPC method
@@ -58,6 +67,7 @@ def serve():
 
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     service_pb2_grpc.add_GoodsServiceServicer_to_server(GoodsService(swimlane), server)
+    health_check_pb2_grpc.add_HealthServicer_to_server(Health(), server)
 
     server.add_insecure_port("[::]:50051")
     print("gRPC server (GoodsService) is running on port 50051")

@@ -40,6 +40,8 @@ deploy:
 	@for file in $(RESOURCE_FILES); do \
 		kubectl apply -f $$file; \
 	done
+	kubectl wait --for=condition=available deploy/gateway-deploy-main --timeout=300s
+	kubectl port-forward svc/gateway-service 8080:8080
 undeploy:
 	@echo "---------- Deleting resources ----------"
 	@for file in $(RESOURCE_FILES); do \

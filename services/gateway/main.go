@@ -59,6 +59,18 @@ func main() {
 			fmt.Fprintf(w, "GoodsID: %s, GoodsName: %s, Price: %d\n", goodsInfo.GoodsId, goodsInfo.GoodsName, goodsInfo.Price)
 		}
 	})
+	// 3. PodProbe: liveness probe
+	http.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
+		// return 200 OK automatically
+	})
+	// 4. PodProbe: readiness probe
+	http.HandleFunc("/ready", func(w http.ResponseWriter, r *http.Request) {
+		_, err := getGoods("")
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+	})
 
 	// Start the server on port 8080
 	fmt.Println("Http server (Gateway) is running on port 8080")

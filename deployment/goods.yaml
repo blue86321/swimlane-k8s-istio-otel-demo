@@ -29,6 +29,14 @@ spec:
         ports:
         - containerPort: 50051
           name: goods-port
+        livenessProbe:
+          # grpc probe does not support `named port`
+          # resource: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#use-a-named-port
+          grpc:
+            port: 50051
+          initialDelaySeconds: 60
+          periodSeconds: 30
+          failureThreshold: 5
 
 ---
 
@@ -63,6 +71,12 @@ spec:
         ports:
         - containerPort: 50051
           name: goods-port
+        livenessProbe:
+          grpc:
+            port: 50051
+          initialDelaySeconds: 60
+          periodSeconds: 30
+          failureThreshold: 5
 
 ---
 apiVersion: apps/v1
@@ -96,6 +110,12 @@ spec:
         ports:
         - containerPort: 50051
           name: goods-port
+        livenessProbe:
+          grpc:
+            port: 50051
+          initialDelaySeconds: 60
+          periodSeconds: 30
+          failureThreshold: 5
 
 ---
 apiVersion: v1

@@ -1,5 +1,6 @@
 package com.swimlanek8sistiodemo;
 
+import com.swimlanek8sistiodemo.service.Health;
 import com.swimlanek8sistiodemo.service.PricingService;
 import io.grpc.*;
 
@@ -17,6 +18,7 @@ public class PricingServiceServer {
         int port = 50052;
         Server server = Grpc.newServerBuilderForPort(port, InsecureServerCredentials.create())
             .addService(ServerInterceptors.intercept(new PricingService(swimlane), new HeaderInterceptor()))
+            .addService(new Health())
             .build()
             .start();
         System.out.println("gRPC server (PricingService) is running on port " + port);
