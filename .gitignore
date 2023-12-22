@@ -1,2 +1,10 @@
 services/**/proto/
-/**/.DS_Store
+**/.DS_Store
+
+# Python
+**/venv
+
+# Java
+**/.idea
+**/target
+*.iml
