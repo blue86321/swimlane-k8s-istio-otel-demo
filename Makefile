@@ -48,6 +48,8 @@ undeploy:
 		kubectl delete --ignore-not-found=true -f $$file; \
 	done
 uninstall:
+	@echo "---------- Uninstall K8s Gateway CRD ----------"
+	kubectl delete --ignore-not-found=true -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.0.0/standard-install.yaml
 	@echo "---------- Uninstall OpenTelemetry CRD ----------"
 	kubectl delete --ignore-not-found=true -f https://github.com/open-telemetry/opentelemetry-operator/releases/download/v0.90.0/opentelemetry-operator.yaml || true
 	@echo "---------- Uninstall cert-manager CRD ----------"

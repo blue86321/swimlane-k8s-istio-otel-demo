@@ -1,46 +1,71 @@
-apiVersion: networking.istio.io/v1alpha3
-kind: VirtualService
+apiVersion: gateway.networking.k8s.io/v1beta1
+kind: HTTPRoute
 metadata:
   name: goods
 spec:
-  hosts:
-  - goods-service
-  http: 
-  - match:
+  parentRefs:
+  - group: ""
+    kind: Service
+    name: goods-service
+  rules:
+  - matches:
     - headers:
-        baggage:
-          regex: .*swimlane=dev-feature1.*
-    route:
-    - destination:
-        host: goods-service
-        subset: dev-feature1
-  - match:
+      - type: RegularExpression
+        name: baggage
+        value: .*swimlane=dev-feature1.*
+    backendRefs:
+    - name: goods-service-dev-feature1
+      port: 50051
+  - matches:
     - headers:
-        baggage:
-          regex: .*swimlane=dev-feature2.*
-    route:
-    - destination:
-        host: goods-service
-        subset: dev-feature2
-  - route:
-    - destination:
-        host: goods-service
-        subset: main
+      - type: RegularExpression
+        name: baggage
+        value: .*swimlane=dev-feature2.*
+    backendRefs:
+    - name: goods-service-dev-feature2
+      port: 50051
+  - backendRefs:
+    - name: goods-service-main
+      port: 50051
 
 ---
-apiVersion: networking.istio.io/v1alpha3
-kind: DestinationRule
+apiVersion: v1
+kind: Service
 metadata:
-  name: goods
+  name: goods-service-main
 spec:
-  host: goods-service
-  subsets:
-  - name: main
-    labels:
-      swimlane: main
-  - name: dev-feature1
-    labels:
-      swimlane: dev-feature1
-  - name: dev-feature2
-    labels:
-      swimlane: dev-feature2
+  selector:
+    app: goods
+    swimlane: main
+  ports:
+    - protocol: TCP
+      port: 50051
+      targetPort: goods-port
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: goods-service-dev-feature1
+spec:
+  selector:
+    app: goods
+    swimlane: dev-feature1
+  ports:
+    - protocol: TCP
+      port: 50051
+      targetPort: goods-port
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: goods-service-dev-feature2
+spec:
+  selector:
+    app: goods
+    swimlane: dev-feature2
+  ports:
+    - protocol: TCP
+      port: 50051
+      targetPort: goods-port

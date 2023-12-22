@@ -1,35 +1,49 @@
-apiVersion: networking.istio.io/v1alpha3
-kind: VirtualService
+apiVersion: gateway.networking.k8s.io/v1beta1
+kind: HTTPRoute
 metadata:
   name: pricing
 spec:
-  hosts:
-  - pricing-service
-  http:
-  - match:
+  parentRefs:
+  - group: ""
+    kind: Service
+    name: pricing-service
+  rules:
+  - matches:
     - headers:
-        baggage:
-          regex: .*swimlane=dev-feature1.*
-    route:
-    - destination:
-        host: pricing-service
-        subset: dev-feature1
-  - route:
-    - destination:
-        host: pricing-service
-        subset: main
+      - type: RegularExpression
+        name: baggage
+        value: .*swimlane=dev-feature1.*
+    backendRefs:
+    - name: pricing-service-dev-feature1
+      port: 50052
+  - backendRefs:
+    - name: pricing-service-main
+      port: 50052
 
 ---
-apiVersion: networking.istio.io/v1alpha3
-kind: DestinationRule
+apiVersion: v1
+kind: Service
 metadata:
-  name: pricing
+  name: pricing-service-main
 spec:
-  host: pricing-service
-  subsets:
-  - name: main
-    labels:
-      swimlane: main
-  - name: dev-feature1
-    labels:
-      swimlane: dev-feature1
+  selector:
+    app: pricing
+    swimlane: main
+  ports:
+    - protocol: TCP
+      port: 50052
+      targetPort: pricing-port
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pricing-service-dev-feature1
+spec:
+  selector:
+    app: pricing
+    swimlane: dev-feature1
+  ports:
+    - protocol: TCP
+      port: 50052
+      targetPort: pricing-port
